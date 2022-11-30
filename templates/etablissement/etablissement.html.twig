@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ Etablissement.nom }}{% endblock %}
+
+{% block body %}
+
+    <div class="card text-center">
+
+        <div class="card-header">
+            <h1>{{ Etablissement.nom }}</h1>
+        </div>
+
+        <div class="card-body">
+            {% for categorie in Etablissement.categorie  %}
+                <span class="badge text-bg-secondary">{{ categorie.nom | capitalize }}</span>
+            {% endfor %}
+
+            <h4 class="mt-3">Description</h4>
+
+            <p class="mt-3">{{ Etablissement.description }}</p>
+
+            <h4>Contacts</h4>
+
+            <p>Adresse : {{ Etablissement.adresse }} <br>
+                {{ Etablissement.ville.nom }} {{ Etablissement.ville.codePostal }}</p>
+
+            <span>Numéro de téléphone : {{ Etablissement.numTel }}</span>
+            <br>
+
+            <span>Email : {{ Etablissement.email }}</span>
+
+        </div>
+
+        <div class="card-footer text-muted">
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-secondary"
+                   href="{{ path("app_etablissements") }}">Retour</a>
+                <i class="bi bi-box-arrow-left"></i>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
