@@ -45,7 +45,7 @@ class Utilisateur {
 -password : string not null
 -createdAt : datetime not null
 -updatedUp : datetime not null
--rôle : string null
+-rôle : array null
 -estActif : bool not null
 
 }
