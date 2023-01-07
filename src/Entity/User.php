@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -30,19 +31,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 60)]
-    private ?string $prénom = null;
+    #[ORM\Column(length: 255)]
+    private ?string $prenom = null;
 
-    #[ORM\Column(length: 60)]
+    #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 60, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedUp = null;
 
     #[ORM\Column]
@@ -118,36 +119,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getPrénom(): ?string
+    public function getPrenom(): ?string
     {
-        return $this->prénom;
+        return $this->prenom;
     }
 
-    public function setPrénom(string $prénom): self
+    public function setPrenom(string $prenom): self
     {
-        $this->prénom = $prénom;
+        $this->prenom = $prenom;
 
         return $this;
-    }
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraint('prénom', new Assert\Length([
-            'min' => 2,
-            'max' => 60,
-            'minMessage' => 'Votre prénom doit contenir au minimum 2 caractères',
-            'maxMessage' => 'Votre prénom doit contenir au maximum 60 caractères',
-        ]));
-    }
-
-    public static function loadValidatorMetadataNom(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraint('nom', new Assert\Length([
-            'min' => 2,
-            'max' => 60,
-            'minMessage' => 'Votre nom doit contenir au minimum 2 caractères',
-            'maxMessage' => 'Votre nom doit contenir au maximum 60 caractères',
-        ]));
     }
 
     public function getNom(): ?string
@@ -208,5 +189,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->estActif = $estActif;
 
         return $this;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('prenom', new Assert\Length([
+            'min' => 2,
+            'max' => 60,
+            'minMessage' => 'Votre prénom doit contenir au minimum 2 caractères',
+            'maxMessage' => 'Votre prénom doit contenir au maximum 60 caractères',
+        ]));
+
+        $metadata->addPropertyConstraint('prenom', new Assert\NotBlank());
+
+        $metadata->addPropertyConstraint('nom', new Assert\Length([
+            'min' => 2,
+            'max' => 60,
+            'minMessage' => 'Votre nom doit contenir au minimum 2 caractères',
+            'maxMessage' => 'Votre nom doit contenir au maximum 60 caractères',
+        ]));
+
+        $metadata->addPropertyConstraint('nom', new Assert\NotBlank());
+
+        $metadata->addPropertyConstraint('pseudo', new Assert\Length([
+            'min' => 2,
+            'max' => 60,
+            'minMessage' => 'Votre pseudo doit contenir au minimum 2 caractères',
+            'maxMessage' => 'Votre pseudo doit contenir au maximum 60 caractères',
+        ]));
+
+        $metadata->addPropertyConstraint('password', new Assert\Length([
+            'min' => 8,
+            'minMessage' => 'Votre mot de passe doit contenir au minimum 8 caractères',
+        ]));
+
+        $metadata->addPropertyConstraint('password', new Assert\NotBlank());
+
+        $metadata->addPropertyConstraint('email', new Assert\Email([
+            'message' => 'Votre email "{{ value }}" est invalide.',
+        ]));
+        $metadata->addPropertyConstraint('email', new Assert\NotBlank());
+        $metadata->addPropertyConstraint('email', new Assert\Unique());
+
+        $metadata->addGetterConstraint('estActif', new IsTrue([
+            'message' => 'Votre compte est inactif.',
+        ]));
     }
 }
