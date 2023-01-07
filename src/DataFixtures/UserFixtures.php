@@ -29,17 +29,20 @@ class UserFixtures extends Fixture
         for($i=1;$i<50;$i++){
             $user = new User();
             $user->setNom($faker->lastName)
-                 ->setPrenom($faker->firstName)
+                 ->setPrenom($faker->firstName);
 
-                 ->setPseudo($faker->userName)
 
-                 ->setEstActif($faker->boolean(50))
+                if ($faker->boolean(50)) {
+                    $user->setPseudo($faker->userName);
+                }
+
+                 $user->setEstActif($faker->boolean(50))
                  ->setCreatedAt(New \DateTime())
                  ->setEmail($faker->email);
 
                 $nombre=$faker->numberBetween(1,3);
 
-                    if ($nombre==1) {
+                    if ($nombre == 1) {
                         $role = ["ROLE_USER"];
                     }elseif ($nombre == 2){
                         $role = ["ROLE_RESTAURANT"];

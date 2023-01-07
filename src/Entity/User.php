@@ -231,7 +231,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $metadata->addPropertyConstraint('email', new Assert\NotBlank());
         $metadata->addPropertyConstraint('email', new Assert\Unique());
 
-        $metadata->addGetterConstraint('estActif', new IsTrue([
+        $metadata->addGetterConstraint('estActif', new Assert\IsTrue([
             'message' => 'Votre compte est inactif.',
         ]));
     }
