@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -48,6 +50,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $estActif = null;
+
+    #[ORM\ManyToMany(targetEntity: Etablissement::class, inversedBy: 'users')]
+    private Collection $etablissements_favoris;
+
+    public function __construct()
+    {
+        $this->etablissements_favoris = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -234,5 +244,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $metadata->addGetterConstraint('estActif', new Assert\IsTrue([
             'message' => 'Votre compte est inactif.',
         ]));
+    }
+
+    /**
+     * @return Collection<int, Etablissement>
+     */
+    public function getEtablissementsFavoris(): Collection
+    {
+        return $this->etablissements_favoris;
+    }
+
+    public function addEtablissementsFavori(Etablissement $etablissementsFavori): self
+    {
+        if (!$this->etablissements_favoris->contains($etablissementsFavori)) {
+            $this->etablissements_favoris->add($etablissementsFavori);
+        }
+
+        return $this;
+    }
+
+    public function removeEtablissementsFavori(Etablissement $etablissementsFavori): self
+    {
+        $this->etablissements_favoris->removeElement($etablissementsFavori);
+
+        return $this;
     }
 }

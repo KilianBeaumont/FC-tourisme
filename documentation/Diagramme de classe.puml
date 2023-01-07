@@ -8,14 +8,12 @@ class Etablissement {
 -descript° : text not null
 -numTel : string not null
 -adresse : string not null
--ville : Ville not null
 -email : string not null
 -image : string null
 -actif : bool not null
 -accueil : bool not null
 -dateCreation : datetime not null
 -dateModification : datetime not null
--categorie : array not null
 
 }
 
@@ -52,4 +50,5 @@ class Utilisateur {
 
 Etablissement "0..* " -- "1..*  "Catégorie
 Etablissement "0..* "-- "1..*"Ville
+Etablissement "0..*" -- "0..*   " Utilisateur
 @enduml

@@ -3,7 +3,11 @@
 namespace App\Controller;
 
 use App\Repository\EtablissementRepository;
+use App\Repository\UserRepository;
 use ContainerREZiCid\getKnpPaginatorService;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,6 +49,33 @@ class EtablissementController extends AbstractController
             "Etablissement" => $etablissement
         ]);
 
+    }
+
+    #[Route('/etablissement/favoris/{slug}', name: 'app_etablissement_favoris_slug')]
+    public function EtablissementFavorisation($slug, UserRepository $userRepository, EntityManagerInterface $manager): Response
+    {
+        $utilisateur = $userRepository->find($this->getUser());
+        $etablissement = $this->etablissementRepository->findOneBy(["slug"=>$slug]);
+        if (in_array($etablissement,$utilisateur->getEtablissementsFavoris()->toArray())){
+            $etablissement->removeUser($utilisateur);
+        }else{
+            $etablissement->addUser($utilisateur);
+        }
+        $manager->persist($etablissement);
+        $manager->flush();
+        return $this->redirectToRoute('app_etablissements');
+
+    }
+
+
+
+    #[Route('/etablissement/favoris', name: 'app_etablissement_favoris')]
+    public function EtablissementFavoris(): Response
+    {
+        $etablissement = $this->etablissementRepository->findOneBy();
+        return $this->render('etablissement/favoris.html.twig', [
+            "Etablissement" => $etablissement
+        ]);
 
     }
 }
