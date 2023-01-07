@@ -67,15 +67,13 @@ class EtablissementController extends AbstractController
 
     }
 
-
-
-    #[Route('/etablissement/favoris', name: 'app_etablissement_favoris')]
-    public function EtablissementFavoris(): Response
+    #[Route('/etablissements/favoris', name: 'app_etablissement_favoris')]
+    public function EtablissementFavoris(UserRepository $userRepository): Response
     {
-        $etablissement = $this->etablissementRepository->findOneBy();
+        $utilisateur = $userRepository->find($this->getUser());
+        $etablissements = $utilisateur->getEtablissementsFavoris();
         return $this->render('etablissement/favoris.html.twig', [
-            "Etablissement" => $etablissement
+            "Etablissements" => $etablissements
         ]);
-
     }
 }
