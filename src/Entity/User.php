@@ -22,6 +22,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotNull]
+    #[Assert\Unique]
+    #[Assert\Email(
+        message: "L'adresse email {{ value }} n'est pas valide.",
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -31,15 +36,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 8,
+        minMessage: 'Votre mot de passe doit comporter minimum {{ limit }} caractères.',
+    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 2,
+        max: 60,
+        minMessage: 'Votre nom doit comporter minimum {{ limit }} caractères.',
+        maxMessage: 'Votre nom doit comporter maximum {{ limit }} caractères.',
+    )]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 2,
+        max: 60,
+        minMessage: 'Votre prénom doit comporter minimum {{ limit }} caractères.',
+        maxMessage: 'Votre prénom doit comporter maximum {{ limit }} caractères.',
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull]
+    #[Assert\Length(
+        min: 2,
+        max: 60,
+        minMessage: 'Votre pseudo doit comporter minimum {{ limit }} caractères.',
+        maxMessage: 'Votre pseudo doit comporter maximum {{ limit }} caractères.',
+    )]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -199,51 +230,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->estActif = $estActif;
 
         return $this;
-    }
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraint('prenom', new Assert\Length([
-            'min' => 2,
-            'max' => 60,
-            'minMessage' => 'Votre prénom doit contenir au minimum 2 caractères',
-            'maxMessage' => 'Votre prénom doit contenir au maximum 60 caractères',
-        ]));
-
-        $metadata->addPropertyConstraint('prenom', new Assert\NotBlank());
-
-        $metadata->addPropertyConstraint('nom', new Assert\Length([
-            'min' => 2,
-            'max' => 60,
-            'minMessage' => 'Votre nom doit contenir au minimum 2 caractères',
-            'maxMessage' => 'Votre nom doit contenir au maximum 60 caractères',
-        ]));
-
-        $metadata->addPropertyConstraint('nom', new Assert\NotBlank());
-
-        $metadata->addPropertyConstraint('pseudo', new Assert\Length([
-            'min' => 2,
-            'max' => 60,
-            'minMessage' => 'Votre pseudo doit contenir au minimum 2 caractères',
-            'maxMessage' => 'Votre pseudo doit contenir au maximum 60 caractères',
-        ]));
-
-        $metadata->addPropertyConstraint('password', new Assert\Length([
-            'min' => 8,
-            'minMessage' => 'Votre mot de passe doit contenir au minimum 8 caractères',
-        ]));
-
-        $metadata->addPropertyConstraint('password', new Assert\NotBlank());
-
-        $metadata->addPropertyConstraint('email', new Assert\Email([
-            'message' => 'Votre email "{{ value }}" est invalide.',
-        ]));
-        $metadata->addPropertyConstraint('email', new Assert\NotBlank());
-        $metadata->addPropertyConstraint('email', new Assert\Unique());
-
-        $metadata->addGetterConstraint('estActif', new Assert\IsTrue([
-            'message' => 'Votre compte est inactif.',
-        ]));
     }
 
     /**
